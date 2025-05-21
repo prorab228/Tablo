@@ -10,15 +10,18 @@ void TimeSetup()
 {
 
   time.begin();
+  //time.settime(0, 30, 18, 12, 6, 20, 5); // 0  сек, 30 мин, 18 часов, 12, июня, 2020, четверг
   TimeAdjustmentSec = EEPROM.read(0)-128;
 }
 
 
 void SetTimeStr(String command)
 {
+ // mySerial.println("Time set");
   if(command.indexOf("TIME ")!=-1)
   {
     String time = command.substring(command.indexOf("TIME ")+5);
+    //mySerial.println(time);
     if(time.indexOf(':')!=-1)   
     {
       mySerial.println(time);
@@ -80,16 +83,26 @@ void showTime()
       mySerial.println(TimeAdjustmentSec);
     } 
 
-    //Подстройка времени
-    if(time.minutes==1 && time.seconds>=(TimeAdjustmentSec*-1)  && !isAdjustment)
+    if(/*time.Hours == 1 &&*/ time.minutes==1 && time.seconds>=(TimeAdjustmentSec*-1)  && !isAdjustment)
     {
-      TimeAdjustment(); 
+      TimeAdjustment(); //Подстройка времени
       isAdjustment = true;
     } 
     else if(time.minutes==2)
     {
       isAdjustment = false;
     } 
+
+   /* SetNumberToDisplay(20 ,5,false);
+    SetNumberToDisplay(56,6,true);*/
+   /* setData(numbers[10] + numbers[3], 2);
+    setData(numbers[4], 3);
+    //setData(4, 3);
+    setData(numbers[4], 4);
+    setData(numbers[4], 5);*/
+    //Show();
+    
+    //clearData();
 }
 
 
@@ -113,6 +126,9 @@ void SetTimerStr(String command)
         int pos = time.indexOf(':');
         String m = time.substring(0,pos);
         String s = time.substring(pos+1);
+
+       // mySerial.println(h+" "+m);
+
         SetTimer(m.toInt(), s.toInt());
 
         mySerial.println("The timer is set");

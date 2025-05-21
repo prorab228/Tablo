@@ -100,6 +100,54 @@ void Reboot()
   asm volatile("jmp 0x00");
 }
 
+void RunCommand(String command)
+{
+  if(command.indexOf("GAME") == 0) OperatingMode = !OperatingMode; //Вкл-выкл режим игры
+  else if(command.indexOf("OSCOREADD") == 0) Score.OwnerScore+=command.substring(9).toInt(); //ДОБАВИТЬ ОЧКОВ ХОЗЯИНУ
+  else if(command.indexOf("OSCORETAKE") == 0) Score.OwnerScore-=command.substring(10).toInt(); //отнять ОЧКОВ ХОЗЯИНУ
+  else if(command.indexOf("VSCOREADD") == 0) Score.VisitorScore+=command.substring(9).toInt(); //ДОБАВИТЬ ОЧКОВ ГОСТЮ
+  else if(command.indexOf("VSCORETAKE") == 0) Score.VisitorScore-=command.substring(10).toInt(); //отнять ОЧКОВ Гостю
+
+  else if(command.indexOf("OSCORECLEAR") == 0) Score.OwnerScore=0; //ОЧИСТИТЬ ИГРОКА
+  else if(command.indexOf("VSCORECLEAR") == 0) Score.VisitorScore=0; //ОЧИСТИТЬ ГОСТЯ
+  else if(command.indexOf("OSCORESET") == 0) Score.OwnerScore=command.substring(9).toInt(); //ЗАДАТЬ ОЧКИ ХОЗЯИНУ
+  else if(command.indexOf("VSCORESET") == 0) Score.VisitorScore=command.substring(9).toInt(); //АДАТЬ ОЧКИ ГОСТЮ
+
+
+  else if(command.indexOf("PERIODADD") == 0) Score.Period++;
+  else if(command.indexOf("PERIODTAKE") == 0) Score.Period--;
+  else if(command.indexOf("PERIODCLERA") == 0) Score.Period=0;
+  else if(command.indexOf("PERIODSET") == 0) Score.Period = command.substring(9).toInt();
+
+  else if(command.indexOf("OFOULADD") == 0) Score.OwnerFoul+=command.substring(8).toInt();
+  else if(command.indexOf("OFOULTAKE") == 0) Score.OwnerFoul-=command.substring(9).toInt();
+  else if(command.indexOf("VFOULADD") == 0) Score.VisitorFoul+=command.substring(8).toInt();
+  else if(command.indexOf("VFOULTAKE") == 0) Score.VisitorFoul-=command.substring(9).toInt();
+  else if(command.indexOf("OFOULCLEAR") == 0) Score.OwnerFoul=0;
+  else if(command.indexOf("VFOULCLEAR") == 0) Score.VisitorFoul=0;
+  else if(command.indexOf("OFOULSET") == 0) Score.OwnerFoul=command.substring(8).toInt();
+  else if(command.indexOf("VFOULSET") == 0) Score.VisitorFoul=command.substring(8).toInt();
+
+
+
+  else if(command.indexOf("CHRONOMETERCL") == 0) ChronometerClear();   
+  else if(command.indexOf("CHRONOMETERSTART") == 0) StartChronometer = !StartChronometer; 
+  else if(command.indexOf("CHRONOMETER") == 0) Chronometer = !Chronometer;   
+  
+  else if(command.indexOf("SETTIMER") == 0) SetTimerStr(command);
+  else if(command.indexOf("TIMER") == 0) StartTimer =!StartTimer;
+
+
+  else if(command.indexOf("CL") == 0) Score.ClearAll();
+
+  else if(command.indexOf("DEBUGTIME") == 0) debugTime = !debugTime;
+  else if(command.indexOf("DEBUG") == 0) debug = !debug; 
+
+  else if(command.indexOf("TIMEAD") == 0) SetTimeAdjustment(command.substring(7).toInt());
+  else if(command.indexOf("TIME") == 0) SetTimeStr(command);
+  else if(command.indexOf("REBOOT") == 0) Reboot();
+}
+
 void ReadCommand()
 {
   if (Serial.available()) {
@@ -107,110 +155,16 @@ void ReadCommand()
     Serial.println("OK");
     Serial.println(command);
 
-    if(command.indexOf("GAME") == 0) OperatingMode = !OperatingMode;
-
-    else if(command.indexOf("OSCOREADD") == 0) Score.OwnerScore+=command.substring(9).toInt(); //ДОБАВИТЬ ОЧКОВ ХОЗЯИНУ
-    else if(command.indexOf("OSCORETAKE") == 0) Score.OwnerScore-=command.substring(10).toInt(); //отнять ОЧКОВ ХОЗЯИНУ
-    else if(command.indexOf("VSCOREADD") == 0) Score.VisitorScore+=command.substring(9).toInt(); //ДОБАВИТЬ ОЧКОВ ГОСТЮ
-    else if(command.indexOf("VSCORETAKE") == 0) Score.VisitorScore-=command.substring(10).toInt(); //отнять ОЧКОВ Гостю
-
-    else if(command.indexOf("OSCORECLEAR") == 0) Score.OwnerScore=0; //ОЧИСТИТЬ ИГРОКА
-    else if(command.indexOf("VSCORECLEAR") == 0) Score.VisitorScore=0; //ОЧИСТИТЬ ГОСТЯ
-    else if(command.indexOf("OSCORESET") == 0) Score.OwnerScore=command.substring(9).toInt(); //ЗАДАТЬ ОЧКИ ХОЗЯИНУ
-    else if(command.indexOf("VSCORESET") == 0) Score.VisitorScore=command.substring(9).toInt(); //АДАТЬ ОЧКИ ГОСТЮ
-
-
-    else if(command.indexOf("PERIODADD") == 0) Score.Period++;
-    else if(command.indexOf("PERIODTAKE") == 0) Score.Period--;
-    else if(command.indexOf("PERIODCLERA") == 0) Score.Period=0;
-    else if(command.indexOf("PERIODSET") == 0) Score.Period = command.substring(9).toInt();
-
-    else if(command.indexOf("OFOULADD") == 0) Score.OwnerFoul+=command.substring(8).toInt();
-    else if(command.indexOf("OFOULTAKE") == 0) Score.OwnerFoul-=command.substring(9).toInt();
-    else if(command.indexOf("VFOULADD") == 0) Score.VisitorFoul+=command.substring(8).toInt();
-    else if(command.indexOf("VFOULTAKE") == 0) Score.VisitorFoul-=command.substring(9).toInt();
-    else if(command.indexOf("OFOULCLEAR") == 0) Score.OwnerFoul=0;
-    else if(command.indexOf("VFOULCLEAR") == 0) Score.VisitorFoul=0;
-    else if(command.indexOf("OFOULSET") == 0) Score.OwnerFoul=command.substring(8).toInt();
-    else if(command.indexOf("VFOULSET") == 0) Score.VisitorFoul=command.substring(8).toInt();
-
-    else if(command.indexOf("CHRONOMETERCL") == 0) ChronometerClear();   
-    else if(command.indexOf("CHRONOMETERSTART") == 0) StartChronometer = !StartChronometer; 
-    else if(command.indexOf("CHRONOMETER") == 0) Chronometer = !Chronometer;   
-    
-    else if(command.indexOf("SETTIMER") == 0) SetTimerStr(command);
-    else if(command.indexOf("TIMER") == 0) StartTimer =!StartTimer;
-
-
-    else if(command.indexOf("CL") == 0) Score.ClearAll();
-
-    else if(command.indexOf("DEBUGTIME") == 0) debugTime = !debugTime;
-    else if(command.indexOf("DEBUG") == 0) debug = !debug; 
-
-    else if(command.indexOf("TIMEAD") == 0) SetTimeAdjustment(command.substring(7).toInt());
-    else if(command.indexOf("TIME") == 0) SetTimeStr(command);
-    else if(command.indexOf("REBOOT") == 0) Reboot();
+    RunCommand(command);
   }
-
 
   if (mySerial.available()) {
     String command = mySerial.readString();
     mySerial.println("OK");
     if(debug) mySerial.println(command);
 
-
-    /*if(command.indexOf("WORK") !=-1) OperatingMode = !OperatingMode;
-    if(command.indexOf("L1") !=-1) Score.OwnerScore++;
-    if(command.indexOf("R1") !=-1) Score.VisitorScore++;
-    if(command.indexOf("P") !=-1) Score.Period++;
-    if(command.indexOf("FL") !=-1) Score.OwnerFoul++;
-    if(command.indexOf("FR") !=-1) Score.VisitorFoul++;
-    if(command.indexOf("CL") !=-1) Score.ClearAll();*/
-
-    if(command.indexOf("GAME") == 0) OperatingMode = !OperatingMode;
-
-    else if(command.indexOf("OSCOREADD") == 0) Score.OwnerScore+=command.substring(9).toInt(); //ДОБАВИТЬ ОЧКОВ ХОЗЯИНУ
-    else if(command.indexOf("OSCORETAKE") == 0) Score.OwnerScore-=command.substring(10).toInt(); //отнять ОЧКОВ ХОЗЯИНУ
-    else if(command.indexOf("VSCOREADD") == 0) Score.VisitorScore+=command.substring(9).toInt(); //ДОБАВИТЬ ОЧКОВ ГОСТЮ
-    else if(command.indexOf("VSCORETAKE") == 0) Score.VisitorScore-=command.substring(10).toInt(); //отнять ОЧКОВ Гостю
-
-    else if(command.indexOf("OSCORECLEAR") == 0) Score.OwnerScore=0; //ОЧИСТИТЬ ИГРОКА
-    else if(command.indexOf("VSCORECLEAR") == 0) Score.VisitorScore=0; //ОЧИСТИТЬ ГОСТЯ
-    else if(command.indexOf("OSCORESET") == 0) Score.OwnerScore=command.substring(9).toInt(); //ЗАДАТЬ ОЧКИ ХОЗЯИНУ
-    else if(command.indexOf("VSCORESET") == 0) Score.VisitorScore=command.substring(9).toInt(); //АДАТЬ ОЧКИ ГОСТЮ
-
-
-    else if(command.indexOf("PERIODADD") == 0) Score.Period++;
-    else if(command.indexOf("PERIODTAKE") == 0) Score.Period--;
-    else if(command.indexOf("PERIODCLERA") == 0) Score.Period=0;
-    else if(command.indexOf("PERIODSET") == 0) Score.Period = command.substring(9).toInt();
-
-    else if(command.indexOf("OFOULADD") == 0) Score.OwnerFoul+=command.substring(8).toInt();
-    else if(command.indexOf("OFOULTAKE") == 0) Score.OwnerFoul-=command.substring(9).toInt();
-    else if(command.indexOf("VFOULADD") == 0) Score.VisitorFoul+=command.substring(8).toInt();
-    else if(command.indexOf("VFOULTAKE") == 0) Score.VisitorFoul-=command.substring(9).toInt();
-    else if(command.indexOf("OFOULCLEAR") == 0) Score.OwnerFoul=0;
-    else if(command.indexOf("VFOULCLEAR") == 0) Score.VisitorFoul=0;
-    else if(command.indexOf("OFOULSET") == 0) Score.OwnerFoul=command.substring(8).toInt();
-    else if(command.indexOf("VFOULSET") == 0) Score.VisitorFoul=command.substring(8).toInt();
-
-    else if(command.indexOf("CHRONOMETERCL") == 0) ChronometerClear();   
-    else if(command.indexOf("CHRONOMETERSTART") == 0) StartChronometer = !StartChronometer; 
-    else if(command.indexOf("CHRONOMETER") == 0) Chronometer = !Chronometer;   
-    
-    else if(command.indexOf("SETTIMER") == 0) SetTimerStr(command);
-    else if(command.indexOf("TIMER") == 0) StartTimer =!StartTimer;
-
-
-    else if(command.indexOf("CL") == 0) Score.ClearAll();
-
-    else if(command.indexOf("DEBUGTIME") == 0) debugTime = !debugTime;
-    else if(command.indexOf("DEBUG") == 0) debug = !debug; 
-
-    else if(command.indexOf("TIMEAD") == 0) SetTimeAdjustment(command.substring(7).toInt());
-    else if(command.indexOf("TIME") == 0) SetTimeStr(command);
-    else if(command.indexOf("REBOOT") == 0) Reboot();
-
+    RunCommand(command);
+  
     if(debug)
     {
       mySerial.println(OperatingMode);
@@ -248,15 +202,15 @@ void loop() {
    // Show();
    // delay(100);
   }*/
-  ReadCommand();
-  if (OperatingMode )
+  ReadCommand(); //Чтение и выполнение команды
+  if (OperatingMode) //Вывод счета в режиме игры
   {
     PrintScore();
     PrintPeriod();
     PrintFoul();
   }
 
-  if(Chronometer)
+  if(Chronometer) //Вывод времени или таймера/секундомера
   {    
     showTimer();
   }
@@ -265,17 +219,17 @@ void loop() {
     showTime();  
   }
 
-  if(StartChronometer)
+  if(StartChronometer) //вкл секундомер
   {
     ChronometerTick();      
   }
-  else if(StartTimer)
+  else if(StartTimer) //вкл таймер
   {
     TimerTick();
   }
 
 
-  if(millis() - oldShow > ShowDelay)
+  if(millis() - oldShow > ShowDelay) //обновление индикаторов по времени
   {
     Show();
     oldShow = millis();
@@ -286,6 +240,6 @@ void loop() {
     oldClear = millis();
     RebootDisplay();
   } */
-  clearData();
+  clearData(); //чистим буфер
   delay(5);
 }
